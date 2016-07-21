@@ -1,0 +1,6 @@
+use_frameworks!
+target 'ViperMcFlurrySwift_Tests' do
+  pod 'ViperMcFlurrySwift', :path => '../'
+  
+  
+end
