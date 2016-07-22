@@ -8,10 +8,6 @@
 
 import UIKit
 
-class ViperViewController: UIViewController {
-  //  var moduleInput: ViperModuleInput?
-}
-
 extension UIViewController: ViperModuleTransitionHandlerProtocol {
   public func openModuleUsingSegue(segueIdentifier: String) -> ViperOpenModulePromise {
     let promise = ViperOpenModulePromise()
@@ -39,5 +35,16 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
       self.removeFromParentViewController()
       self.view.removeFromSuperview()
     }
+  }
+}
+
+
+extension UISplitViewController: ViperSplitModuleTransitionHandlerProtocol {
+  public func showDetailViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise {
+    let promise = ViperOpenModulePromise()
+    dispatch_async(dispatch_get_main_queue()) {
+      self.showDetailViewController(vc.instantiateModuleTransitionHandler() as! UIViewController, sender: nil)
+    }
+    return promise
   }
 }

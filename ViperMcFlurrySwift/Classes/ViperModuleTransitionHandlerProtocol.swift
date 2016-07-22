@@ -30,3 +30,13 @@ public extension ViperModuleTransitionHandlerProtocol {
     
   }
 }
+
+public protocol ViperSplitModuleTransitionHandlerProtocol: ViperModuleTransitionHandlerProtocol {
+  func showDetailViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise
+}
+
+extension ViperSplitModuleTransitionHandlerProtocol {
+  public func showDetailViewController(vc: ViperModuleFactory) {
+    
+  }
+}
