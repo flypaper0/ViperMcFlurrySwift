@@ -35,7 +35,7 @@ public class ViperOpenModulePromise {
     let linkBlock = linkBlock else {
       return
     }
-    let moduleOutput: ViperModuleOutput = linkBlock(moduleInput: moduleInput)!
+//    let moduleOutput: ViperModuleOutput = linkBlock(moduleInput: moduleInput)!
 //    moduleInput.setModuleOutput(moduleOutput)
     postLinkActionBlock()
   }
