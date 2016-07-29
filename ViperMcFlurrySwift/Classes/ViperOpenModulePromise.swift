@@ -31,12 +31,13 @@ public class ViperOpenModulePromise {
   
   private func performLink() {
     guard let moduleInput = moduleInput,
-    let postLinkActionBlock = postLinkActionBlock,
     let linkBlock = linkBlock else {
       return
     }
 //    let moduleOutput: ViperModuleOutput = linkBlock(moduleInput: moduleInput)!
 //    moduleInput.setModuleOutput(moduleOutput)
-    postLinkActionBlock()
+    if let postLinkActionBlock = postLinkActionBlock {
+      postLinkActionBlock()
+    }
   }
 }
