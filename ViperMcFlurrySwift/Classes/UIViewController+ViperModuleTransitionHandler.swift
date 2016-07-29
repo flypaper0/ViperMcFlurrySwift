@@ -36,6 +36,14 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
       self.view.removeFromSuperview()
     }
   }
+  
+  public func presentViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise {
+    let promise = ViperOpenModulePromise()
+    dispatch_async(dispatch_get_main_queue()) {
+      self.presentViewController(vc.instantiateModuleTransitionHandler() as! UIViewController, animated: true, completion: nil)
+    }
+    return promise
+  }
 }
 
 
