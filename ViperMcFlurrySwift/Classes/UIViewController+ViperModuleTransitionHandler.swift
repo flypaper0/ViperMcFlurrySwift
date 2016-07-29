@@ -39,8 +39,13 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
   
   public func presentViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise {
     let promise = ViperOpenModulePromise()
+    let vc = vc.instantiateModuleTransitionHandler() as! UIViewController
+    guard let input = vc as? ViperModuleInput else {
+      fatalError("Destination ViewControlle doesnot conform to ViperInputModule protocol")
+    }
+    promise.moduleInput = input
     dispatch_async(dispatch_get_main_queue()) {
-      self.presentViewController(vc.instantiateModuleTransitionHandler() as! UIViewController, animated: true, completion: nil)
+      self.presentViewController(vc as! UIViewController, animated: true, completion: nil)
     }
     return promise
   }
