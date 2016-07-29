@@ -16,6 +16,8 @@ public protocol ViperModuleTransitionHandlerProtocol: class {
   func openModuleUsingSegue(segueIdentifier: String) -> ViperOpenModulePromise 
   func closeCurrentModule(animated: Bool)
   func presentViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise
+  func showPopoverViewController(vc: ViperModuleFactory, target: UIView,
+                                 direction: UIPopoverArrowDirection) -> ViperOpenModulePromise
 }
 
 public extension ViperModuleTransitionHandlerProtocol {
@@ -34,8 +36,15 @@ public extension ViperModuleTransitionHandlerProtocol {
   func presentViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise {
     return ViperOpenModulePromise()
   }
+  
+  func showPopoverViewController(vc: ViperModuleFactory, target: UIView,
+                                 direction: UIPopoverArrowDirection) -> ViperOpenModulePromise {
+    return ViperOpenModulePromise()
+  }
 }
 
 public protocol ViperSplitModuleTransitionHandlerProtocol: ViperModuleTransitionHandlerProtocol {
   func showDetailViewController(vc: ViperModuleFactory) -> ViperOpenModulePromise
 }
+
+
