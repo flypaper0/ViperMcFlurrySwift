@@ -11,9 +11,8 @@ import UIKit
 extension UIViewController: ViperModuleTransitionHandlerProtocol {
   public func openModuleUsingSegue(segueIdentifier: String) -> ViperOpenModulePromise {
     let promise = ViperOpenModulePromise()
-    dispatch_async(dispatch_get_main_queue()) {
-      self.performSegueWithIdentifier(segueIdentifier, sender: promise)
-    }
+    
+    self.performSegueWithIdentifier(segueIdentifier, sender: promise)
     return promise
   }
   
@@ -51,7 +50,7 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
   }
   
   public func showPopoverViewController(vc: ViperModuleFactory, target: UIView,
-                                 direction: UIPopoverArrowDirection) -> ViperOpenModulePromise {
+                                        direction: UIPopoverArrowDirection) -> ViperOpenModulePromise {
     let promise = ViperOpenModulePromise()
     let vc = vc.instantiateModuleTransitionHandler() as! UIViewController
     guard let popover = vc.popoverPresentationController else {
