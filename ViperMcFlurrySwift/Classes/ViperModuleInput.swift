@@ -9,5 +9,5 @@
 import Foundation
 
 public protocol ViperModuleInput: class {
-  func setModuleOutput(moduleOutput: [String: AnyObject])
+  func sendData(data: [String: AnyObject])
 }
