@@ -12,7 +12,12 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
   public func openModuleUsingSegue(segueIdentifier: String) -> ViperOpenModulePromise {
     let promise = ViperOpenModulePromise()
     
-    self.performSegueWithIdentifier(segueIdentifier, sender: promise)
+    self.performSegueWithIdentifier(segueIdentifier, sender: promise) {
+      segue in
+      if let moduleInput = segue.destinationViewController as? ViperModuleInput {
+        promise.moduleInput = moduleInput
+      }
+    }
     return promise
   }
   
@@ -68,6 +73,57 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
     }
     return promise
   }
+  
+  struct AssociatedKey {
+    static var ClosurePrepareForSegueKey = "ClosurePrepareForSegueKey"
+    static var token: dispatch_once_t = 0
+  }
+  
+  typealias ConfiguratePerformSegue = (UIStoryboardSegue) -> ()
+  func performSegueWithIdentifier(identifier: String, sender: AnyObject?, configurate: ConfiguratePerformSegue?) {
+    swizzlingPrepareForSegue()
+    configuratePerformSegue = configurate
+    performSegueWithIdentifier(identifier, sender: sender)
+  }
+  
+  private func swizzlingPrepareForSegue() {
+    dispatch_once(&AssociatedKey.token) {
+      let originalSelector = #selector(UIViewController.prepareForSegue(_:sender:))
+      let swizzledSelector = #selector(UIViewController.closurePrepareForSegue(_:sender:))
+      
+      let instanceClass = UIViewController.self
+      let originalMethod = class_getInstanceMethod(instanceClass, originalSelector)
+      let swizzledMethod = class_getInstanceMethod(instanceClass, swizzledSelector)
+      
+      let didAddMethod = class_addMethod(instanceClass, originalSelector,
+                                         method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+      
+      if didAddMethod {
+        class_replaceMethod(instanceClass, swizzledSelector,
+                            method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+      } else {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+      }
+    }
+  }
+  
+  func closurePrepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    configuratePerformSegue?(segue)
+    closurePrepareForSegue(segue, sender: sender)
+    configuratePerformSegue = nil
+  }
+  
+  var configuratePerformSegue: ConfiguratePerformSegue? {
+    get {
+      let box = objc_getAssociatedObject(self, &AssociatedKey.ClosurePrepareForSegueKey) as? Box
+      return box?.value as? ConfiguratePerformSegue
+    }
+    set {
+      objc_setAssociatedObject(self, &AssociatedKey.ClosurePrepareForSegueKey,
+                               Box(newValue),
+                               objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+    }
+  }
 }
 
 
@@ -78,5 +134,12 @@ extension UISplitViewController: ViperSplitModuleTransitionHandlerProtocol {
       self.showDetailViewController(vc.instantiateModuleTransitionHandler() as! UIViewController, sender: nil)
     }
     return promise
+  }
+}
+
+class Box {
+  let value: Any
+  init(_ value: Any) {
+    self.value = value
   }
 }
