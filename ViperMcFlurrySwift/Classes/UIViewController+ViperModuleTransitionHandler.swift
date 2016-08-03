@@ -54,10 +54,11 @@ extension UIViewController: ViperModuleTransitionHandlerProtocol {
     return promise
   }
   
-  public func showPopoverViewController(vc: ViperModuleFactory, target: UIView,
+public func showPopoverViewController(vc: ViperModuleFactory, target: UIView,
                                         direction: UIPopoverArrowDirection) -> ViperOpenModulePromise {
     let promise = ViperOpenModulePromise()
     let vc = vc.instantiateModuleTransitionHandler() as! UIViewController
+    vc.modalPresentationStyle = .Popover
     guard let popover = vc.popoverPresentationController else {
       fatalError("Not a popover. At all.")
     }
